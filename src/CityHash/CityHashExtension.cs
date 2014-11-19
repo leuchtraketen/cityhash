@@ -34,10 +34,11 @@
 // Original code: https://code.google.com/p/cityhash/
 //
 
+#if !NET20 // Framework v2.0 does not support extensions
+
 using System;
 
 namespace CityHash {
-
     /// <summary>
     /// Provides the CityHash string extensions.
     /// </summary>
@@ -136,3 +137,4 @@ namespace CityHash {
         
     }
 }
+#endif

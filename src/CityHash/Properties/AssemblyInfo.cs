@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CityHash.Net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("CityHash provides non-cryptographic hash functions for strings.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CityHash.Net")]
 [assembly: AssemblyCopyright("Copyright © 2011 Google, Inc")]
-[assembly: AssemblyTrademark("Ported to C# by Gustavo J KNUPPE")]
+[assembly: AssemblyTrademark("Ported to .Net by Gustavo J KNUPPE")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

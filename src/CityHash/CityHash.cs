@@ -37,8 +37,11 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+
+#if NET45
 using System.Runtime;
 using System.Runtime.CompilerServices;
+#endif
 
 namespace CityHash {
     /// <summary>
@@ -94,7 +97,9 @@ namespace CityHash {
         /// Bitwise right rotate. 
         /// Normally this will compile to a single instruction, especially if the shift is a manifest constant.
         /// </summary>
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static ulong Rotate(ulong val, int shift) {
             // Avoid shifting by 64: doing so yields an undefined result.
             return shift == 0 ? val : ((val >> shift) | (val << (64 - shift)));
@@ -102,14 +107,18 @@ namespace CityHash {
         #endregion
 
         #region . Rotate32 .
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static uint Rotate32(uint value, int shift) {
             return shift == 0 ? value : ((value >> shift) | (value << (32 - shift)));
         }
         #endregion
 
         #region . Mur .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static uint Mur(uint a, uint h) {
             // Helper from Murmur3 for combining two 32-bit values.
             a *= c1;
@@ -122,7 +131,9 @@ namespace CityHash {
         #endregion
 
         #region . BSwap32 .
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static uint BSwap32(uint value) {
             return 
                 (value >> 24) | 
@@ -133,7 +144,9 @@ namespace CityHash {
         #endregion
 
         #region . BSwap64 .
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static ulong BSwap64(ulong value) {
             return
                 (value >> 56) |
@@ -153,9 +166,11 @@ namespace CityHash {
         /// </summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="index">The starting position within value.</param>
-        /// <returns>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="index"/>.</returns>
+        /// <returns>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="index"/>.</returns>       
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static uint Fetch32(byte[] value, int index = 0) {
             return BitConverter.ToUInt32(value, index);
         }
@@ -164,9 +179,11 @@ namespace CityHash {
         /// </summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="index">The starting position within value.</param>
-        /// <returns>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="index"/>.</returns>
+        /// <returns>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="index"/>.</returns>        
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static uint Fetch32(byte[] value, uint index = 0) {
             return BitConverter.ToUInt32(value, (int)index);
         }
@@ -180,14 +197,18 @@ namespace CityHash {
         /// <param name="value">An array of bytes.</param>
         /// <param name="index">The starting position within <paramref name="value"/>.</param>
         /// <returns>A 64-bit unsigned integer formed by the eight bytes beginning at <paramref name="index"/>.</returns>
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static ulong Fetch64(byte[] value, int index = 0) {
             return BitConverter.ToUInt64(value, index);
         }
         #endregion
 
         #region . Hash32Len0to4 .
+        #if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        #endif
         private static uint Hash32Len0to4(byte[] value) {
             var l = (uint)value.Length;
             var b = 0u;
@@ -202,7 +223,9 @@ namespace CityHash {
         #endregion
 
         #region . Hash32Len5to12 .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static uint Hash32Len5to12(byte[] value) {
             uint a = (uint)value.Length, b = a * 5, c = 9, d = b;
 
@@ -215,7 +238,9 @@ namespace CityHash {
         #endregion
 
         #region . Hash32Len13to24 .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static uint Hash32Len13to24(byte[] value) {
             var a = Fetch32(value, (value.Length >> 1) - 4);
             var b = Fetch32(value, 4);
@@ -229,9 +254,11 @@ namespace CityHash {
         }
         #endregion
 
-        #region . Permute3 .
+        #region . Permute3 .       
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static void Permute3<T>(ref T a, ref T b, ref T c) {
             var temp = a;
             a = c; c = b; b = temp;
@@ -239,14 +266,18 @@ namespace CityHash {
         #endregion
 
         #region . ShiftMix .
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static ulong ShiftMix(ulong val) {
             return val ^ (val >> 47);
         }
         #endregion
 
         #region . Swap .
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static void Swap<T>(ref T a, ref T b) {
             var temp = a;
             a = b;
@@ -255,9 +286,13 @@ namespace CityHash {
         #endregion
 
         #region . CityMurmur .
-        // A subroutine for CityHash128().  Returns a decent 128-bit hash for strings
-        // of any length representable in signed long.  Based on City and Murmur.
+        /// <summary>
+        /// A subroutine for CityHash128().  Returns a decent 128-bit hash for strings
+        /// of any length representable in signed long.  Based on City and Murmur.
+        /// </summary>
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         protected static uint128 CityMurmur(byte[] value, uint128 seed, int offset) {
             var a = seed.Low;
             var b = seed.High;
@@ -500,9 +535,23 @@ namespace CityHash {
             return CityHash64(Encoding.GetEncoding("ISO-8859-1").GetBytes(value), seed0, seed1);
         }
 
+        /// <summary>
+        /// Computes the 64-bit city hash for the specified string and seed.
+        /// </summary>
+        /// <param name="value">The encoded string.</param>
+        /// <param name="seed">The seed used by the algorithm.</param>
+        /// <returns>The 64-bit city hash.</returns>
         protected static ulong CityHash64(byte[] value, ulong seed) {
             return CityHash64(value, k2, seed);
         }
+
+        /// <summary>
+        /// Computes the 64-bit city hash for the specified string and seed.
+        /// </summary>
+        /// <param name="value">The encoded string.</param>
+        /// <param name="seed0">The low-order 64-bits seed used by the algorithm.</param>
+        /// <param name="seed1">The high-order 64-bits seed used by the algorithm.</param>
+        /// <returns>The 64-bit city hash.</returns>
         protected static ulong CityHash64(byte[] value, ulong seed0, ulong seed1) {
             return HashLen16(CityHash64(value) - seed0, seed1);
         }
@@ -516,7 +565,9 @@ namespace CityHash {
         /// <param name="value">The string value.</param>
         /// <returns>The 128-bit city hash.</returns>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         public static uint128 CityHash128(string value) {
             return CityHash128(Encoding.GetEncoding("ISO-8859-1").GetBytes(value));
         }
@@ -529,7 +580,9 @@ namespace CityHash {
         /// <param name="seed">The seed used by the city hash algorithm.</param>
         /// <returns>The 128-bit city hash.</returns>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         public static uint128 CityHash128(string value, uint128 seed) {
             return CityHash128(Encoding.GetEncoding("ISO-8859-1").GetBytes(value), seed, 0);
         }
@@ -543,7 +596,9 @@ namespace CityHash {
         /// The city hash is designed to compute hash for STRINGs only! 
         /// The city hash "works" with other types of data, but keep in mind it was not built for it.
         /// </remarks>
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         protected static uint128 CityHash128(byte[] value) {
             return value.Length >= 16
                 ? CityHash128(value, new uint128(Fetch64(value), Fetch64(value, 8) + k0), 16)
@@ -562,7 +617,9 @@ namespace CityHash {
         /// The city hash is designed to compute hash for STRINGs only! 
         /// The city hash "works" with other types of data, but keep in mind it was not built for it.
         /// </remarks>
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         protected static uint128 CityHash128(byte[] value, uint128 seed, int offset) {
             if (value.Length - offset < 128) 
                 return CityMurmur(value, seed, offset);
@@ -648,12 +705,16 @@ namespace CityHash {
         #endregion
 
         #region . HashLen16 .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static ulong HashLen16(ulong u, ulong v) {
             return Hash128to64(new uint128(u, v));
         }
 
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static ulong HashLen16(ulong u, ulong v, ulong mul) {
             // Murmur-inspired hashing.
             var a = (u ^ v) * mul;
@@ -666,7 +727,9 @@ namespace CityHash {
         #endregion
 
         #region . HashLen0to16 .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static ulong HashLen0to16(byte[] value, int offset = 0) {
             var len = (uint)(value.Length - offset);
 
@@ -706,7 +769,9 @@ namespace CityHash {
         /// <summary>
         /// This probably works well for 16-byte strings as well, but it may be overkill in that case.
         /// </summary>
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static ulong HashLen17to32(byte[] value) {
             var len = (ulong)value.Length;
 
@@ -724,7 +789,9 @@ namespace CityHash {
         /// <summary>
         /// Return an 8-byte hash for 33 to 64 bytes.
         /// </summary>
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static UInt64 HashLen33to64(byte[] value) {
             var mul = k2 + (ulong)value.Length * 2ul;
             var a = Fetch64(value) * k2;
@@ -750,7 +817,9 @@ namespace CityHash {
         #endregion
 
         #region . Hash128to64 .
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private static ulong Hash128to64(uint128 x) {
             const ulong kMul = 0x9ddfea08eb382d69UL;
 
@@ -783,7 +852,9 @@ namespace CityHash {
             return new uint128(a + z, b + c);
         }
 
+#if NET45
         [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries.")]
+#endif
         private static uint128 WeakHashLen32WithSeeds(byte[] value, int offset, ulong a, ulong b) {
             return WeakHashLen32WithSeeds(
                 Fetch64(value, offset),
