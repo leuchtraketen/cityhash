@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>CityHashPure</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>XEonAX, tobiasschulz</Authors>
+    <PackageDescription>Managed CityHash Implementation!</PackageDescription>
+    <RepositoryUrl>https://github.com/XEonAX/CityHashPure</RepositoryUrl>
   </PropertyGroup>
 
 </Project>

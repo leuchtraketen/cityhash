@@ -107,6 +107,9 @@ namespace CityHash {
                 return (Low.GetHashCode() * 397) ^ High.GetHashCode();
             }
         }
+
+
+        public override string ToString() => High.ToString("X16") + Low.ToString("X16");
         #endregion
 
     }
