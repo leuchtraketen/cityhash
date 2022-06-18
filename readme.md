@@ -1,3 +1,18 @@
+CityHashPure
+Targets Net Standard 2.0
+
+
+
+
+
+
+
+
+
+
+
+Original Readme below:
+
 CityHash.Net
 
 ## What is this?
